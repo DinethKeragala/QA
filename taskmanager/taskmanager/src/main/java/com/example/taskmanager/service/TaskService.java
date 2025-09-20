@@ -13,6 +13,8 @@ public class TaskService {
 
     private final TaskRepository repository;
 
+    private static final String TITLE_REQUIRED_MSG = "Title is mandatory";
+
     public TaskService(TaskRepository repository) {
         this.repository = repository;
     }
@@ -25,11 +27,29 @@ public class TaskService {
         return repository.findById(id);
     }
 
+    /*
     public Task addTask(@Valid Task task) {
+        // No validation here -> test expecting an exception will fail (red)
+        return repository.save(task);
+    }
+     */
+
+    /*
+    public Task addTask(@Valid Task task) {
+        if (task.getTitle() == null || task.getTitle().isBlank()) {
+            throw new IllegalArgumentException("Title is mandatory");
+        }
+        return repository.save(task);
+    }
+    */
+    public Task addTask(@Valid Task task) {
+        ensureTitleValid(task.getTitle());
         return repository.save(task);
     }
 
+
     public Task updateTask(Long id, @Valid Task taskDetails) {
+        // No validation here -> updating with blank title won't throw either
         return repository.findById(id)
                 .map(task -> {
                     task.setTitle(taskDetails.getTitle());
@@ -46,6 +66,12 @@ public class TaskService {
             repository.delete(taskOpt.get());
         } else {
             throw new RuntimeException("Task not found");
+        }
+    }
+
+    private void ensureTitleValid(String title) {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException(TITLE_REQUIRED_MSG);
         }
     }
 }

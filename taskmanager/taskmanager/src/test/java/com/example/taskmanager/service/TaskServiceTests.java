@@ -6,10 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 class TaskServiceTests {
 
@@ -42,9 +40,7 @@ class TaskServiceTests {
         task.setTitle(""); // invalid
         task.setDescription("Test");
 
-        Exception exception = assertThrows(Exception.class, () -> {
-            taskService.addTask(task);
-        });
+        Exception exception = assertThrows(Exception.class, () -> taskService.addTask(task));
 
         String expectedMessage = "Title is mandatory";
         String actualMessage = exception.getMessage();
